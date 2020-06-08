@@ -22,7 +22,7 @@ def m8ball():
     answers = ["It is certain", "It is decidedly so", "Without a doubt", "Yes – definitely", "You may rely on it", "As I see it", "Most Likely", "Outlook good", "Yes", "Signs point to yes", "Don’t count on it", "My reply is no", "My sources say no", "Outlook not so good", "Very doubtful", "Reply hazy", "Try again", "Ask again later", "Better not tell you now", "Cannot predict now", "Concentrate and ask again"]
     return random.choice(answers)
 
-def community_report(guild):
+def _community_report(guild):
     idle, online, offline = 0, 0, 0
     for m in guild.members:
         if str(m.status) == "online":
@@ -33,6 +33,7 @@ def community_report(guild):
             idle += 1
     return online, offline, idle
 
+'''
 async def user_metrics_background_tasks():
     await client.wait_until_ready()
     global my_guild
@@ -40,7 +41,7 @@ async def user_metrics_background_tasks():
 
     while not client.is_closed():
         try:
-            online, offline, idle = community_report(my_guild)
+            online, offline, idle = _community_report(my_guild)
             with open("usermetrics.csv", "a") as f:
                 f.write(f"{int(time.time())+18000}, {online}, {offline}, {idle}\n")
 
@@ -66,6 +67,7 @@ async def user_metrics_background_tasks():
         except Exception as e:
             print(str(e))
             await asyncio.sleep(2)
+'''
 
 @client.event
 async def on_ready():
@@ -115,7 +117,7 @@ async def choose(ctx, *args):
     await ctx.send(random.choice(args))
 
 @client.command()
-async def logout(ctx):
+async def kill619815(ctx):
     await client.close()
     sys.exit()
 
@@ -125,11 +127,11 @@ async def ping(ctx):
 
 @client.command()
 async def report(ctx):
-    global my_guild
-    on, of, idl = community_report(my_guild)
+    G = ctx.guild
+    on, of, idl = _community_report(G)
     await ctx.send(f"```py\nOnline: {on}\nOffline: {of}\nIdle: {idl}\nTotal: {on+of+idl}```")
-    file = discord.File('online.png', filename='online.png')
-    await ctx.send('Online Per Time', file=file)
+    '''file = discord.File('online.png', filename='online.png')
+    await ctx.send('Online Per Time', file=file)'''
 
 @client.command()
 async def theDay(ctx):
@@ -144,7 +146,7 @@ async def theTime(ctx, h=0, m=0):
 async def time_since_join(ctx):
     mem = ctx.message.mentions[0]
     diff = ((datetime.datetime.now())-(mem.joined_at))
-    await ctx.send(f"```{diff} (in dd:hh:mm::ss)```")
+    await ctx.send(f"```{diff} (in dd:hh:mm:ss)```")
 
 @client.command()
 async def kick(ctx, mem:discord.Member, *, reason=None):
@@ -239,5 +241,5 @@ async def message_info(ctx, limit=None):
     
     await ctx.send(f'```{info}```')
 
-client.loop.create_task(user_metrics_background_tasks())
+#client.loop.create_task(user_metrics_background_tasks())
 client.run(token)
